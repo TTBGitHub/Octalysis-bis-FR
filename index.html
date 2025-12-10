@@ -374,7 +374,7 @@
             <div class="octalysis-link">
                 Basé sur l'outil Octalysis de Yu-kai Chou —
                 <a href="https://www.yukaichou.com/octalysis-tool/" target="_blank" rel="noopener noreferrer">
-                    https://www.yukaichou.com/octalysis-tool/
+                    [https://www.yukaichou.com/octalysis-tool/](https://www.yukaichou.com/octalysis-tool/)
                 </a>
             </div>
         </div>
@@ -444,30 +444,46 @@
         let scores = [5,5,5,5,5,5,5,5];
 
         const commentsMatrix = [
-            ["Le sens épique est très faible : aucune mission globale ou cause supérieure n'est vraiment perçue. Tu peux ajouter une histoire, une vision ou un impact social clair pour donner du sens.",
-             "Le sens épique est présent mais discret : clarifie la 'grande histoire' derrière les actions et rappelle-la régulièrement pour lier les efforts quotidiens à un but plus large.",
-             "Le sens épique est puissant : les utilisateurs ont l'impression de participer à quelque chose d'important. Garde ce récit cohérent et fais-le évoluer pour maintenir l'engagement."],
-            ["La progression est difficile à voir : peu d'objectifs clairs ou de sentiment d'avancer. Ajoute des niveaux, des jalons intermédiaires et des indicateurs pour montrer les progrès.",
-             "La progression existe mais pourrait être plus lisible ou plus découpée. Des objectifs courts et des petites victoires fréquentes renforceraient ce levier.",
-             "Le sentiment de progression est fort : les utilisateurs voient clairement leurs réussites. Veille à garder un bon équilibre entre difficulté, feedback et récompenses."],
-            ["L'expérience laisse peu de place aux choix personnels ou à la créativité. Les utilisateurs peuvent se sentir enfermés dans un parcours unique.",
-             "Il y a quelques choix et possibilités, mais ils restent limités. Proposer plus de stratégies, de chemins alternatifs ou de personnalisation rendrait l'implication plus profonde.",
-             "Les utilisateurs disposent d'une vraie marge de manœuvre pour créer, expérimenter et adapter l'expérience. Continue à donner un feedback rapide sur leurs essais."],
-            ["Le sentiment de possession est faible : il y a peu de choses que l'on garde, améliore ou collectionne. Introduire des ressources, avatars ou objets persistants peut aider.",
-             "Les utilisateurs possèdent déjà certains éléments, mais ce sentiment pourrait être renforcé par plus de personnalisation et de collections à compléter.",
-             "Le sentiment de propriété est fort : les utilisateurs s'investissent dans ce qu'ils possèdent. Attention à garder ces éléments significatifs, pas seulement nombreux."],
-            ["La dimension sociale est très limitée : l'expérience est principalement individuelle. Ajouter entraide, coopération ou défis amicaux pourrait augmenter fortement l'engagement.",
-             "Il existe des mécanismes sociaux, mais ils restent peu visibles ou peu utilisés. Améliorer la qualité et la fréquence des interactions renforcerait ce levier.",
-             "L'influence sociale est un pilier fort : les utilisateurs se comparent, coopèrent ou se soutiennent. Surveille que la compétition reste saine et inclusive."],
-            ["La rareté et l'urgence sont quasi absentes : tout est toujours disponible. Un peu de limitation dans le temps ou en quantité peut créer un meilleur sentiment d'opportunité.",
-             "Certaines ressources ou événements sont rares, ce qui crée une légère urgence. Veille à ce que cela reste motivant sans devenir source de stress.",
-             "La rareté est fortement utilisée : elle génère beaucoup d'envie d'agir. Utilise ce levier avec éthique pour éviter les effets compulsifs ou épuisants."],
-            ["L'expérience est très prévisible : il y a peu de surprises. Les utilisateurs peuvent vite tomber dans une routine.",
-             "Il y a déjà quelques éléments imprévisibles ou contenus cachés, mais ils restent ponctuels. Tu peux structurer davantage ces surprises pour entretenir la curiosité.",
-             "L'imprévisibilité est bien dosée : les utilisateurs sont régulièrement surpris sans se sentir perdus. Continue à alterner repères stables et nouveautés."],
-            ["La peur de perdre quelque chose est très faible : c'est confortable, mais cela peut limiter la fidélité. Si tu actives ce levier, fais-le avec douceur (streaks, bonus temporaires).",
-             "Il existe quelques enjeux de perte (séries, délais), mais ils restent modérés. Vérifie qu'ils soutiennent la motivation sans générer de culpabilité.",
-             "La peur de perdre un avantage est très présente et pousse à revenir souvent. Attention à ne pas créer de pression excessive ou de découragement en cas de rupture."]
+            [
+                "Le sens épique est très faible : aucune mission globale ou cause supérieure n'est vraiment perçue. Vous pouvez ajouter une histoire, une vision ou un impact social clair pour donner du sens.",
+                "Le sens épique est présent mais discret : clarifiez la 'grande histoire' derrière les actions et rappelez-la régulièrement pour lier les efforts quotidiens à un but plus large.",
+                "Le sens épique est puissant : les utilisateurs ont l'impression de participer à quelque chose d'important. Gardez ce récit cohérent et faites-le évoluer pour maintenir l'engagement."
+            ],
+            [
+                "La progression est difficile à voir : il y a peu d'objectifs clairs ou de sentiment d'avancer. Ajoutez des niveaux, des jalons intermédiaires et des indicateurs pour montrer les progrès.",
+                "La progression existe mais pourrait être plus lisible ou plus découpée. Des objectifs courts et des petites victoires fréquentes renforceraient ce levier.",
+                "Le sentiment de progression est fort : les utilisateurs voient clairement leurs réussites. Veillez à garder un bon équilibre entre difficulté, feedback et récompenses."
+            ],
+            [
+                "L'expérience laisse peu de place aux choix personnels ou à la créativité. Les utilisateurs peuvent se sentir enfermés dans un parcours unique.",
+                "Il y a quelques choix et possibilités, mais ils restent limités. Proposer plus de stratégies, de chemins alternatifs ou de personnalisation rendrait l'implication plus profonde.",
+                "Les utilisateurs disposent d'une vraie marge de manœuvre pour créer, expérimenter et adapter l'expérience. Continuez à donner un feedback rapide sur leurs essais."
+            ],
+            [
+                "Le sentiment de possession est faible : il y a peu de choses que l'on garde, améliore ou collectionne. Introduire des ressources, avatars ou objets persistants peut aider.",
+                "Les utilisateurs possèdent déjà certains éléments, mais ce sentiment pourrait être renforcé par plus de personnalisation et de collections à compléter.",
+                "Le sentiment de propriété est fort : les utilisateurs s'investissent dans ce qu'ils possèdent. Veillez à garder ces éléments significatifs, pas seulement nombreux."
+            ],
+            [
+                "La dimension sociale est très limitée : l'expérience est principalement individuelle. Ajouter entraide, coopération ou défis amicaux pourrait augmenter fortement l'engagement.",
+                "Il existe des mécanismes sociaux, mais ils restent peu visibles ou peu utilisés. Améliorer la qualité et la fréquence des interactions renforcerait ce levier.",
+                "L'influence sociale est un pilier fort : les utilisateurs se comparent, coopèrent ou se soutiennent. Veillez à ce que la compétition reste saine et inclusive."
+            ],
+            [
+                "La rareté et l'urgence sont quasi absentes : tout est toujours disponible. Un peu de limitation dans le temps ou en quantité peut créer un meilleur sentiment d'opportunité.",
+                "Certaines ressources ou événements sont rares, ce qui crée une légère urgence. Veillez à ce que cela reste motivant sans devenir source de stress.",
+                "La rareté est fortement utilisée : elle génère beaucoup d'envie d'agir. Utilisez ce levier avec éthique pour éviter les effets compulsifs ou épuisants."
+            ],
+            [
+                "L'expérience est très prévisible : il y a peu de surprises. Les utilisateurs peuvent vite tomber dans une routine.",
+                "Il y a déjà quelques éléments imprévisibles ou contenus cachés, mais ils restent ponctuels. Vous pouvez structurer davantage ces surprises pour entretenir la curiosité.",
+                "L'imprévisibilité est bien dosée : les utilisateurs sont régulièrement surpris sans se sentir perdus. Continuez à alterner repères stables et nouveautés."
+            ],
+            [
+                "La peur de perdre quelque chose est très faible : c'est confortable, mais cela peut limiter la fidélité. Si vous activez ce levier, faites-le avec douceur (séries à maintenir, bonus temporaires).",
+                "Il existe quelques enjeux de perte (séries, délais), mais ils restent modérés. Vérifiez qu'ils soutiennent la motivation sans générer de culpabilité.",
+                "La peur de perdre un avantage est très présente et pousse à revenir souvent. Veillez à ne pas créer de pression excessive ou de découragement en cas de rupture."
+            ]
         ];
 
         function getComment(i, score) {
