@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Outil Octalysis Français</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+            color: #1f2933;
+        }
+        .container {
+            height: 100vh;
+            width: 100vw;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            text-align: center;
+            color: #eff6ff;
+            padding-bottom: 6px;
+            flex-shrink: 0;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 3px;
+            font-weight: 700;
+        }
+        .subtitle {
+            font-size: 0.9em;
+            opacity: 0.95;
+            margin-bottom: 4px;
+        }
+        .octalysis-link {
+            font-size: 0.9em;
+            margin-top: 2px;
+        }
+        .octalysis-link a {
+            color: #facc15;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1.4fr;
+            gap: 8px;
+            height: calc(100% - 80px);
+        }
+
+        .panel {
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #dbeafe;
+            padding: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel:nth-child(2) { background: #eff6ff; }
+        .panel:nth-child(3) { background: #ffffff; }
+
+        /* Colonne 1 + 2 : grille alignée critères/commentaires */
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 6px;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .criterion-block {
+            display: contents; /* permet d’aligner curseur + commentaire sur une même ligne virtuelle */
+        }
+
+        .slider-container {
+            margin-bottom: 4px;
+            padding: 6px;
+            background: #e5f0ff;
+            border-radius: 8px;
+            border-left: 3px solid #1d4ed8;
+        }
+        .slider-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #1f2933;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .slider-value {
+            background: #1d4ed8;
+            color: white;
+            padding: 1px 8px;
+            border-radius: 999px;
+            font-size: 0.75em;
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+        .core-drive-desc {
+            color: #374151;
+            font-size: 0.75em;
+            margin-bottom: 3px;
+            line-height: 1.25;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            border-radius: 3px;
+            background: #bfdbfe;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #2563eb;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.3);
+        }
+
+        .comment-container {
+            margin-bottom: 4px;
+            padding: 6px 7px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #22c55e;
+            font-size: 0.85em;
+        }
+        .comment-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        /* Colonne 3 : infos + graphique */
+        .info-group {
+            margin-bottom: 8px;
+        }
+        label {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #1f2933;
+            margin-bottom: 2px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 7px 9px;
+            border: 1px solid #cbd5f5;
+            border-radius: 6px;
+            font-size: 0.9em;
+            resize: none;
+            background: #ffffff;
+        }
+        .chart-container {
+            flex: 1;
+            position: relative;
+            min-height: 220px;
+            margin-bottom: 8px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+            color: white;
+            padding: 6px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+        .stat-number {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 1px;
+        }
+        .btn-pdf {
+            padding: 8px 10px;
+            font-size: 0.9em;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #1d4ed8 0%, #0ea5e9 100%);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-end;
+        }
+        .btn-pdf:hover {
+            opacity: 0.95;
+        }
+
+        .footer {
+            font-size: 0.8em;
+            text-align: right;
+            color: #ebf4ff;
+            margin-top: 2px;
+        }
+        .footer a {
+            color: #bfdbfe;
+            text-decoration: underline;
+        }
+
+        @media print {
+            body { background: #ffffff; }
+            .container { height: auto; }
+            .btn-pdf { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Outil Octalysis Français</h1>
+            <div class="subtitle">Analyse en direct des 8 leviers de motivation</div>
+            <div class="octalysis-link">
+                Basé sur l’outil Octalysis de Yu-kai Chou —
+                <a href="https://www.yukaichou.com/octalysis-tool/" target="_blank" rel="noopener noreferrer">
+                    https://www.yukaichou.com/octalysis-tool/
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Colonnes 1 & 2 : critères + commentaires alignés -->
+            <div class="panel" style="grid-column: 1 / span 2;">
+                <div class="criteria-grid" id="criteriaGrid">
+                    <!-- Généré en JS pour garder l’alignement 1 critère = 1 commentaire -->
+                </div>
+            </div>
+
+            <!-- Colonne 3 : Infos + Graphique + PDF -->
+            <div class="panel">
+                <div class="info-group">
+                    <label>Nom de l'expérience</label>
+                    <input type="text" id="experienceName" placeholder="Ex : Mon escape game pédagogique">
+                </div>
+                <div class="info-group">
+                    <label>Description</label>
+                    <textarea id="experienceDesc" rows="3" placeholder="Décrivez brièvement votre expérience..."></textarea>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="octalysisChart"></canvas>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgScore">5.0</div>
+                        <div>Score moyen</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="strongDrives">0</div>
+                        <div>Leviers forts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="weakDrives">0</div>
+                        <div>Leviers faibles</div>
+                    </div>
+                </div>
+
+                <button class="btn-pdf" onclick="window.print()">Sauvegarder en PDF</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            Créé par C. HEYREND-CASANOVAS pour le
+            <a href="https://pedagogie.ac-montpellier.fr/ressources-et-formation-du-cercle-detude-numerique-physique-chimie"
+               target="_blank" rel="noopener noreferrer">
+                CEN-PC Académie de Montpellier
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const labels = [
+            'Sens épique',
+            'Développement',
+            'Créativité',
+            'Propriété',
+            'Social',
+            'Rareté',
+            'Curiosité',
+            'Perte'
+        ];
+        let scores = [5,5,5,5,5,5,5,5]; // défaut à 5
+
+        const commentsMatrix = [
+            [
+                "Le sens épique est très faible : aucune mission globale ou cause supérieure n'est vraiment perçue. Tu peux ajouter une histoire, une vision ou un impact social clair pour donner du sens.",
+                "Le sens épique est présent mais discret : clarifie la 'grande histoire' derrière les actions et rappelle-la régulièrement pour lier les efforts quotidiens à un but plus large.",
+                "Le sens épique est puissant : les utilisateurs ont l'impression de participer à quelque chose d'important. Garde ce récit cohérent et fais-le évoluer pour maintenir l'engagement."
+            ],
+            [
+                "La progression est difficile à voir : peu d'objectifs clairs ou de sentiment d'avancer. Ajoute des niveaux, des jalons intermédiaires et des indicateurs pour montrer les progrès.",
+                "La progression existe mais pourrait être plus lisible ou plus découpée. Des objectifs courts et des petites victoires fréquentes renforceraient ce levier.",
+                "Le sentiment de progression est fort : les utilisateurs voient clairement leurs réussites. Veille à garder un bon équilibre entre difficulté, feedback et récompenses."
+            ],
+            [
+                "L'expérience laisse peu de place aux choix personnels ou à la créativité. Les utilisateurs peuvent se sentir enfermés dans un parcours unique.",
+                "Il y a quelques choix et possibilités, mais ils restent limités. Proposer plus de stratégies, de chemins alternatifs ou de personnalisation rendrait l'implication plus profonde.",
+                "Les utilisateurs disposent d'une vraie marge de manœuvre pour créer, expérimenter et adapter l'expérience. Continue à donner un feedback rapide sur leurs essais."
+            ],
+            [
+                "Le sentiment de possession est faible : il y a peu de choses que l'on garde, améliore ou collectionne. Introduire des ressources, avatars ou objets persistants peut aider.",
+                "Les utilisateurs possèdent déjà certains éléments, mais ce sentiment pourrait être renforcé par plus de personnalisation et de collections à compléter.",
+                "Le sentiment de propriété est fort : les utilisateurs s'investissent dans ce qu'ils possèdent. Attention à garder ces éléments significatifs, pas seulement nombreux."
+            ],
+            [
+                "La dimension sociale est très limitée : l'expérience est principalement individuelle. Ajouter entraide, coopération ou défis amicaux pourrait augmenter fortement l'engagement.",
+                "Il existe des mécanismes sociaux, mais ils restent peu visibles ou peu utilisés. Améliorer la qualité et la fréquence des interactions renforcerait ce levier.",
+                "L'influence sociale est un pilier fort : les utilisateurs se comparent, coopèrent ou se soutiennent. Surveille que la compétition reste saine et inclusive."
+            ],
+            [
+                "La rareté et l'urgence sont quasi absentes : tout est toujours disponible. Un peu de limitation dans le temps ou en quantité peut créer un meilleur sentiment d'opportunité.",
+                "Certaines ressources ou événements sont rares, ce qui crée une légère urgence. Veille à ce que cela reste motivant sans devenir source de stress.",
+                "La rareté est fortement utilisée : elle génère beaucoup d'envie d'agir. Utilise ce levier avec éthique pour éviter les effets compulsifs ou épuisants."
+            ],
+            [
+                "L'expérience est très prévisible : il y a peu de surprises. Les utilisateurs peuvent vite tomber dans une routine.",
+                "Il y a déjà quelques éléments imprévisibles ou contenus cachés, mais ils restent ponctuels. Tu peux structurer davantage ces surprises pour entretenir la curiosité.",
+                "L'imprévisibilité est bien dosée : les utilisateurs sont régulièrement surpris sans se sentir perdus. Continue à alterner repères stables et nouveautés."
+            ],
+            [
+                "La peur de perdre quelque chose est très faible : c'est confortable, mais cela peut limiter la fidélité. Si tu actives ce levier, fais-le avec douceur (streaks, bonus temporaires).",
+                "Il existe quelques enjeux de perte (séries, délais), mais ils restent modérés. Vérifie qu'ils soutiennent la motivation sans générer de culpabilité.",
+                "La peur de perdre un avantage est très présente et pousse à revenir souvent. Attention à ne pas créer de pression excessive ou de découragement en cas de rupture."
+            ]
+        ];
+
+        function getComment(i, score) {
+            if (score <= 3) return commentsMatrix[i][0];
+            if (score < 7) return commentsMatrix[i][1];
+            return commentsMatrix[i][2];
+        }
+
+        // Génération des blocs critère + commentaire alignés
+        const grid = document.getElementById('criteriaGrid');
+        labels.forEach((label, i) => {
+            const block = document.createElement('div');
+            block.className = 'criterion-block';
+            block.innerHTML = `
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>${i+1}. ${label}</span>
+                        <span class="slider-value" id="value${i+1}">5</span>
+                    </div>
+                    <div class="core-drive-desc">
+                        ${
+                            i===0 ? "Mission importante, cause supérieure." :
+                            i===1 ? "Progression, niveaux, maîtrise." :
+                            i===2 ? "Choix libres, essais, personnalisation." :
+                            i===3 ? "Objets, avatars, ressources à soi." :
+                            i===4 ? "Coopération, comparaison, reconnaissance." :
+                            i===5 ? "Offres limitées, opportunités rares." :
+                            i===6 ? "Surprises, découverte, imprévisible." :
+                                    "Peur de perdre un avantage."
+                        }
+                    </div>
+                    <input type="range" min="0" max="10" value="5" class="slider" id="slider${i+1}" step="1">
+                </div>
+                <div class="comment-container" id="comment${i+1}">
+                    <div class="comment-title">${label} (5.0)</div>
+                    <div>${getComment(i, 5)}</div>
+                </div>
+            `;
+            grid.appendChild(block);
+        });
+
+        // Graphique
+        const ctx = document.getElementById('octalysisChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Profil Octalysis',
+                    data: scores,
+                    backgroundColor: 'rgba(37, 99, 235, 0.20)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                    pointBorderColor: '#fff',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 10,
+                        ticks: { stepSize: 2 },
+                        angleLines: { color: 'rgba(15, 23, 42, 0.12)' },
+                        grid: { color: 'rgba(15, 23, 42, 0.1)' },
+                        pointLabels: { font: { size: 11 } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        function updateUI() {
+            const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+            document.getElementById('avgScore').textContent = avg.toFixed(1);
+            document.getElementById('strongDrives').textContent = scores.filter(s=>s>=7).length;
+            document.getElementById('weakDrives').textContent = scores.filter(s=>s<=3).length;
+
+            labels.forEach((label, i) => {
+                const commentDiv = document.getElementById(`comment${i+1}`);
+                const title = commentDiv.querySelector('.comment-title');
+                const body = commentDiv.querySelector('div:last-child');
+                title.textContent = `${label} (${scores[i].toFixed(1)})`;
+                body.textContent = getComment(i, scores[i]);
+            });
+
+            chart.data.datasets[0].data = scores;
+            chart.update('none');
+        }
+
+        document.querySelectorAll('.slider').forEach((slider, index) => {
+            const span = document.getElementById(`value${index + 1}`);
+            slider.addEventListener('input', () => {
+                const v = parseInt(slider.value, 10);
+                scores[index] = v;
+                span.textContent = v.toString();
+                updateUI();
+            });
+        });
+
+        // Initialisation avec valeurs à 5
+        updateUI();
+    </script>
+</body>
+</html>
