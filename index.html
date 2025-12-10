@@ -67,7 +67,6 @@
         .panel:nth-child(2) { background: #eff6ff; }
         .panel:nth-child(3) { background: #ffffff; }
 
-        /* Colonne 1 + 2 : grille alignée critères/commentaires */
         .criteria-grid {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
@@ -78,7 +77,7 @@
         }
 
         .criterion-block {
-            display: contents; /* permet d’aligner curseur + commentaire sur une même ligne virtuelle */
+            display: contents;
         }
 
         .slider-container {
@@ -146,7 +145,6 @@
             margin-bottom: 2px;
         }
 
-        /* Colonne 3 : infos + graphique */
         .info-group {
             margin-bottom: 8px;
         }
@@ -217,10 +215,154 @@
             text-decoration: underline;
         }
 
+        /* EXPORT PDF : A4 PORTRAIT, 2 PAGES */
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+
         @media print {
-            body { background: #ffffff; }
-            .container { height: auto; }
-            .btn-pdf { display: none; }
+            body {
+                background: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                overflow: visible;
+                font-size: 10pt;
+            }
+
+            .container {
+                width: 100%;
+                height: auto;
+                padding: 0;
+            }
+
+            .main-content {
+                display: block !important;
+                height: auto;
+            }
+
+            .header {
+                text-align: center;
+                margin-bottom: 6mm;
+                padding: 4mm;
+                background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%) !important;
+                color: white !important;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                page-break-after: avoid;
+            }
+            .header h1 {
+                font-size: 20pt;
+                color: white !important;
+                margin-bottom: 2mm;
+            }
+            .header .subtitle {
+                font-size: 13pt;
+                color: #dbeafe !important;
+                margin-bottom: 2mm;
+            }
+            .header .octalysis-link {
+                font-size: 11pt;
+            }
+            .header .octalysis-link a {
+                color: #facc15 !important;
+            }
+
+            /* BLOC TEXTE Nom + Description sur PAGE 1 (sous le header) */
+            #printExpInfoPage1 {
+                display: block;
+                font-size: 11pt;
+                font-weight: 600;
+                margin: 0 0 6mm 0;
+                padding: 4mm;
+                background: #f8fafc;
+                border-left: 4px solid #3b82f6;
+                border-radius: 4px;
+                white-space: pre-wrap;
+            }
+
+            /* Panel critères + commentaires = fin PAGE 1 */
+            .panel[style*="grid-column: 1 / span 2"] {
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                padding: 4mm;
+                margin-top: 0;
+                page-break-after: always;
+            }
+            .panel[style*="grid-column: 1 / span 2"] .slider-container {
+                display: none !important;
+            }
+            .panel[style*="grid-column: 1 / span 2"] .criteria-grid {
+                display: block !important;
+            }
+            .panel[style*="grid-column: 1 / span 2"] .comment-container {
+                margin-bottom: 4mm;
+                padding: 3mm;
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                font-size: 9.5pt;
+                background: #fafbff;
+            }
+
+            /* PAGE 2 : titre (re-imprimé automatiquement), puis Nom+Desc, puis graphique+stats */
+            /* Nom + Description sur PAGE 2 (au-dessus du graphique) */
+            #printExpInfoPage2 {
+                display: block;
+                font-size: 11pt;
+                font-weight: 600;
+                margin: 6mm 0 4mm 0;
+                padding: 4mm;
+                background: #f8fafc;
+                border-left: 4px solid #3b82f6;
+                border-radius: 4px;
+                white-space: pre-wrap;
+            }
+
+            .panel:last-child {
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                padding: 4mm;
+                margin-top: 0;
+            }
+            .panel:last-child .info-group {
+                display: none !important;
+            }
+            .panel:last-child .chart-container {
+                height: 85mm !important;
+                margin-bottom: 4mm;
+            }
+            .panel:last-child .stats-grid {
+                gap: 2mm;
+                justify-content: center;
+            }
+            .panel:last-child .stat-card {
+                padding: 3mm 2mm;
+                font-size: 9pt;
+                min-width: 70mm;
+            }
+
+            .btn-pdf {
+                display: none !important;
+            }
+
+            .footer {
+                margin-top: 6mm;
+                color: #374151 !important;
+                font-size: 9pt;
+                text-align: center;
+                padding: 2mm;
+                border-top: 1px solid #e5e7eb;
+            }
+
+            /* Les blocs texte Nom+Description ne sont que pour l'impression */
+            .exp-print-info {
+                display: none;
+            }
+        }
+
+        /* Affichage écran seulement : on masque les blocs texte de print */
+        .exp-print-info {
+            display: none;
         }
     </style>
 </head>
@@ -230,18 +372,21 @@
             <h1>Outil Octalysis Français</h1>
             <div class="subtitle">Analyse en direct des 8 leviers de motivation</div>
             <div class="octalysis-link">
-                Basé sur l’outil Octalysis de Yu-kai Chou —
+                Basé sur l'outil Octalysis de Yu-kai Chou —
                 <a href="https://www.yukaichou.com/octalysis-tool/" target="_blank" rel="noopener noreferrer">
                     https://www.yukaichou.com/octalysis-tool/
                 </a>
             </div>
         </div>
 
+        <!-- Bloc texte Nom+Description pour PAGE 1 (impression uniquement) -->
+        <div id="printExpInfoPage1" class="exp-print-info"></div>
+
         <div class="main-content">
             <!-- Colonnes 1 & 2 : critères + commentaires alignés -->
             <div class="panel" style="grid-column: 1 / span 2;">
                 <div class="criteria-grid" id="criteriaGrid">
-                    <!-- Généré en JS pour garder l’alignement 1 critère = 1 commentaire -->
+                    <!-- Généré en JS -->
                 </div>
             </div>
 
@@ -255,6 +400,9 @@
                     <label>Description</label>
                     <textarea id="experienceDesc" rows="3" placeholder="Décrivez brièvement votre expérience..."></textarea>
                 </div>
+
+                <!-- Bloc texte Nom+Description pour PAGE 2 (impression uniquement) -->
+                <div id="printExpInfoPage2" class="exp-print-info"></div>
 
                 <div class="chart-container">
                     <canvas id="octalysisChart"></canvas>
@@ -290,58 +438,36 @@
 
     <script>
         const labels = [
-            'Sens épique',
-            'Développement',
-            'Créativité',
-            'Propriété',
-            'Social',
-            'Rareté',
-            'Curiosité',
-            'Perte'
+            'Sens épique', 'Développement', 'Créativité', 'Propriété',
+            'Social', 'Rareté', 'Curiosité', 'Perte'
         ];
-        let scores = [5,5,5,5,5,5,5,5]; // défaut à 5
+        let scores = [5,5,5,5,5,5,5,5];
 
         const commentsMatrix = [
-            [
-                "Le sens épique est très faible : aucune mission globale ou cause supérieure n'est vraiment perçue. Tu peux ajouter une histoire, une vision ou un impact social clair pour donner du sens.",
-                "Le sens épique est présent mais discret : clarifie la 'grande histoire' derrière les actions et rappelle-la régulièrement pour lier les efforts quotidiens à un but plus large.",
-                "Le sens épique est puissant : les utilisateurs ont l'impression de participer à quelque chose d'important. Garde ce récit cohérent et fais-le évoluer pour maintenir l'engagement."
-            ],
-            [
-                "La progression est difficile à voir : peu d'objectifs clairs ou de sentiment d'avancer. Ajoute des niveaux, des jalons intermédiaires et des indicateurs pour montrer les progrès.",
-                "La progression existe mais pourrait être plus lisible ou plus découpée. Des objectifs courts et des petites victoires fréquentes renforceraient ce levier.",
-                "Le sentiment de progression est fort : les utilisateurs voient clairement leurs réussites. Veille à garder un bon équilibre entre difficulté, feedback et récompenses."
-            ],
-            [
-                "L'expérience laisse peu de place aux choix personnels ou à la créativité. Les utilisateurs peuvent se sentir enfermés dans un parcours unique.",
-                "Il y a quelques choix et possibilités, mais ils restent limités. Proposer plus de stratégies, de chemins alternatifs ou de personnalisation rendrait l'implication plus profonde.",
-                "Les utilisateurs disposent d'une vraie marge de manœuvre pour créer, expérimenter et adapter l'expérience. Continue à donner un feedback rapide sur leurs essais."
-            ],
-            [
-                "Le sentiment de possession est faible : il y a peu de choses que l'on garde, améliore ou collectionne. Introduire des ressources, avatars ou objets persistants peut aider.",
-                "Les utilisateurs possèdent déjà certains éléments, mais ce sentiment pourrait être renforcé par plus de personnalisation et de collections à compléter.",
-                "Le sentiment de propriété est fort : les utilisateurs s'investissent dans ce qu'ils possèdent. Attention à garder ces éléments significatifs, pas seulement nombreux."
-            ],
-            [
-                "La dimension sociale est très limitée : l'expérience est principalement individuelle. Ajouter entraide, coopération ou défis amicaux pourrait augmenter fortement l'engagement.",
-                "Il existe des mécanismes sociaux, mais ils restent peu visibles ou peu utilisés. Améliorer la qualité et la fréquence des interactions renforcerait ce levier.",
-                "L'influence sociale est un pilier fort : les utilisateurs se comparent, coopèrent ou se soutiennent. Surveille que la compétition reste saine et inclusive."
-            ],
-            [
-                "La rareté et l'urgence sont quasi absentes : tout est toujours disponible. Un peu de limitation dans le temps ou en quantité peut créer un meilleur sentiment d'opportunité.",
-                "Certaines ressources ou événements sont rares, ce qui crée une légère urgence. Veille à ce que cela reste motivant sans devenir source de stress.",
-                "La rareté est fortement utilisée : elle génère beaucoup d'envie d'agir. Utilise ce levier avec éthique pour éviter les effets compulsifs ou épuisants."
-            ],
-            [
-                "L'expérience est très prévisible : il y a peu de surprises. Les utilisateurs peuvent vite tomber dans une routine.",
-                "Il y a déjà quelques éléments imprévisibles ou contenus cachés, mais ils restent ponctuels. Tu peux structurer davantage ces surprises pour entretenir la curiosité.",
-                "L'imprévisibilité est bien dosée : les utilisateurs sont régulièrement surpris sans se sentir perdus. Continue à alterner repères stables et nouveautés."
-            ],
-            [
-                "La peur de perdre quelque chose est très faible : c'est confortable, mais cela peut limiter la fidélité. Si tu actives ce levier, fais-le avec douceur (streaks, bonus temporaires).",
-                "Il existe quelques enjeux de perte (séries, délais), mais ils restent modérés. Vérifie qu'ils soutiennent la motivation sans générer de culpabilité.",
-                "La peur de perdre un avantage est très présente et pousse à revenir souvent. Attention à ne pas créer de pression excessive ou de découragement en cas de rupture."
-            ]
+            ["Le sens épique est très faible : aucune mission globale ou cause supérieure n'est vraiment perçue. Tu peux ajouter une histoire, une vision ou un impact social clair pour donner du sens.",
+             "Le sens épique est présent mais discret : clarifie la 'grande histoire' derrière les actions et rappelle-la régulièrement pour lier les efforts quotidiens à un but plus large.",
+             "Le sens épique est puissant : les utilisateurs ont l'impression de participer à quelque chose d'important. Garde ce récit cohérent et fais-le évoluer pour maintenir l'engagement."],
+            ["La progression est difficile à voir : peu d'objectifs clairs ou de sentiment d'avancer. Ajoute des niveaux, des jalons intermédiaires et des indicateurs pour montrer les progrès.",
+             "La progression existe mais pourrait être plus lisible ou plus découpée. Des objectifs courts et des petites victoires fréquentes renforceraient ce levier.",
+             "Le sentiment de progression est fort : les utilisateurs voient clairement leurs réussites. Veille à garder un bon équilibre entre difficulté, feedback et récompenses."],
+            ["L'expérience laisse peu de place aux choix personnels ou à la créativité. Les utilisateurs peuvent se sentir enfermés dans un parcours unique.",
+             "Il y a quelques choix et possibilités, mais ils restent limités. Proposer plus de stratégies, de chemins alternatifs ou de personnalisation rendrait l'implication plus profonde.",
+             "Les utilisateurs disposent d'une vraie marge de manœuvre pour créer, expérimenter et adapter l'expérience. Continue à donner un feedback rapide sur leurs essais."],
+            ["Le sentiment de possession est faible : il y a peu de choses que l'on garde, améliore ou collectionne. Introduire des ressources, avatars ou objets persistants peut aider.",
+             "Les utilisateurs possèdent déjà certains éléments, mais ce sentiment pourrait être renforcé par plus de personnalisation et de collections à compléter.",
+             "Le sentiment de propriété est fort : les utilisateurs s'investissent dans ce qu'ils possèdent. Attention à garder ces éléments significatifs, pas seulement nombreux."],
+            ["La dimension sociale est très limitée : l'expérience est principalement individuelle. Ajouter entraide, coopération ou défis amicaux pourrait augmenter fortement l'engagement.",
+             "Il existe des mécanismes sociaux, mais ils restent peu visibles ou peu utilisés. Améliorer la qualité et la fréquence des interactions renforcerait ce levier.",
+             "L'influence sociale est un pilier fort : les utilisateurs se comparent, coopèrent ou se soutiennent. Surveille que la compétition reste saine et inclusive."],
+            ["La rareté et l'urgence sont quasi absentes : tout est toujours disponible. Un peu de limitation dans le temps ou en quantité peut créer un meilleur sentiment d'opportunité.",
+             "Certaines ressources ou événements sont rares, ce qui crée une légère urgence. Veille à ce que cela reste motivant sans devenir source de stress.",
+             "La rareté est fortement utilisée : elle génère beaucoup d'envie d'agir. Utilise ce levier avec éthique pour éviter les effets compulsifs ou épuisants."],
+            ["L'expérience est très prévisible : il y a peu de surprises. Les utilisateurs peuvent vite tomber dans une routine.",
+             "Il y a déjà quelques éléments imprévisibles ou contenus cachés, mais ils restent ponctuels. Tu peux structurer davantage ces surprises pour entretenir la curiosité.",
+             "L'imprévisibilité est bien dosée : les utilisateurs sont régulièrement surpris sans se sentir perdus. Continue à alterner repères stables et nouveautés."],
+            ["La peur de perdre quelque chose est très faible : c'est confortable, mais cela peut limiter la fidélité. Si tu actives ce levier, fais-le avec douceur (streaks, bonus temporaires).",
+             "Il existe quelques enjeux de perte (séries, délais), mais ils restent modérés. Vérifie qu'ils soutiennent la motivation sans générer de culpabilité.",
+             "La peur de perdre un avantage est très présente et pousse à revenir souvent. Attention à ne pas créer de pression excessive ou de découragement en cas de rupture."]
         ];
 
         function getComment(i, score) {
@@ -350,7 +476,6 @@
             return commentsMatrix[i][2];
         }
 
-        // Génération des blocs critère + commentaire alignés
         const grid = document.getElementById('criteriaGrid');
         labels.forEach((label, i) => {
             const block = document.createElement('div');
@@ -361,18 +486,16 @@
                         <span>${i+1}. ${label}</span>
                         <span class="slider-value" id="value${i+1}">5</span>
                     </div>
-                    <div class="core-drive-desc">
-                        ${
-                            i===0 ? "Mission importante, cause supérieure." :
-                            i===1 ? "Progression, niveaux, maîtrise." :
-                            i===2 ? "Choix libres, essais, personnalisation." :
-                            i===3 ? "Objets, avatars, ressources à soi." :
-                            i===4 ? "Coopération, comparaison, reconnaissance." :
-                            i===5 ? "Offres limitées, opportunités rares." :
-                            i===6 ? "Surprises, découverte, imprévisible." :
-                                    "Peur de perdre un avantage."
-                        }
-                    </div>
+                    <div class="core-drive-desc">${
+                        i===0 ? "Mission importante, cause supérieure." :
+                        i===1 ? "Progression, niveaux, maîtrise." :
+                        i===2 ? "Choix libres, essais, personnalisation." :
+                        i===3 ? "Objets, avatars, ressources à soi." :
+                        i===4 ? "Coopération, comparaison, reconnaissance." :
+                        i===5 ? "Offres limitées, opportunités rares." :
+                        i===6 ? "Surprises, découverte, imprévisible." :
+                                "Peur de perdre un avantage."
+                    }</div>
                     <input type="range" min="0" max="10" value="5" class="slider" id="slider${i+1}" step="1">
                 </div>
                 <div class="comment-container" id="comment${i+1}">
@@ -383,7 +506,6 @@
             grid.appendChild(block);
         });
 
-        // Graphique
         const ctx = document.getElementById('octalysisChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'radar',
@@ -418,7 +540,7 @@
         });
 
         function updateUI() {
-            const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+            const avg = scores.reduce((a,b)=>a+b,0)/8;
             document.getElementById('avgScore').textContent = avg.toFixed(1);
             document.getElementById('strongDrives').textContent = scores.filter(s=>s>=7).length;
             document.getElementById('weakDrives').textContent = scores.filter(s=>s<=3).length;
@@ -433,6 +555,14 @@
 
             chart.data.datasets[0].data = scores;
             chart.update('none');
+
+            const name = document.getElementById('experienceName').value || "Non renseigné";
+            const desc = document.getElementById('experienceDesc').value || "Aucune description";
+
+            const page1 = document.getElementById('printExpInfoPage1');
+            const page2 = document.getElementById('printExpInfoPage2');
+            page1.textContent = `Nom de l'expérience : ${name}\n\nDescription : ${desc}`;
+            page2.textContent = `Nom de l'expérience : ${name}\n\nDescription : ${desc}`;
         }
 
         document.querySelectorAll('.slider').forEach((slider, index) => {
@@ -440,12 +570,14 @@
             slider.addEventListener('input', () => {
                 const v = parseInt(slider.value, 10);
                 scores[index] = v;
-                span.textContent = v.toString();
+                span.textContent = v;
                 updateUI();
             });
         });
 
-        // Initialisation avec valeurs à 5
+        document.getElementById('experienceName').addEventListener('input', updateUI);
+        document.getElementById('experienceDesc').addEventListener('input', updateUI);
+
         updateUI();
     </script>
 </body>
